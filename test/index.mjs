@@ -1,8 +1,8 @@
 import assert from 'assert';
 import cache from 'memory-cache';
-import { simpleList, getUserId, get, getUserByMobile } from '../index.mjs';
+import { simpleList, getUserId, get, getUserByMobile, listId, listAllId } from '../index.mjs';
 
-const { CORP_ID, SECRET, TEST_DEPT_ID, TEST_USER_PHONE, TEST_USER_ID } = process.env;
+const { CORP_ID, SECRET, TEST_DEPT_ID, TEST_USER_PHONE, TEST_USER_ID, CONTACT_SECRET } = process.env;
 const options = {
   corpId: CORP_ID,
   secret: SECRET,
@@ -28,5 +28,19 @@ describe('wecom-user-api 测试', function () {
   it('getUserByMobile', async () => {
     const res = await getUserByMobile(TEST_USER_PHONE, options);
     assert.equal(res.userid, TEST_USER_ID);
+  });
+  it('listId 获取企业成员的userid与对应的部门ID列表', async () => {
+    const res = await listId({ limit: 1 }, {
+      ...options,
+      secret: CONTACT_SECRET,
+    });
+    assert.equal(res.dept_user.length, 1);
+  });
+  it('listId 获取全部企业成员的userid与对应的部门ID列表', async () => {
+    const res = await listAllId({
+      ...options,
+      secret: CONTACT_SECRET,
+    });
+    assert.ok(res.length);
   });
 });

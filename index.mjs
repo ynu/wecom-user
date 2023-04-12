@@ -14,6 +14,7 @@ const warn = Debug('wecom-user:warn');
   * @param {String} id 部门id
   * @param {Boolean} fetchChild 是否递归获取子部门成员
   * @returns 成员列表
+  * @deprecated 企微已停用
   */
 export const simpleList = async (id, options = {}) => {
   const fetchChild = options.fetchChild || false;
@@ -166,6 +167,46 @@ export const changeMainDepartment = async (userid, newDeptId, options = {}) => {
   }, options);
 }
 
+/**
+ * 获取企业成员的userid与对应的部门ID列表
+ * @param {Object} params 可选参数
+ *  - cursor 下次取值的游标，默认为空
+ *  - limit 取值数量，默认为10000，最大10000
+ * @param {Object} options 凭证（仅支持通过“通讯录同步secret”调用）
+ * @see https://developer.work.weixin.qq.com/document/path/96067
+ */
+export const listId = async (params, options = {}) => {
+  params.cursor = params?.cursor || '';
+  params.limit = params?.limit || 10000;
+  const token = await getToken(options);
+  const res = await axios.post(`${qyHost}/user/list_id?access_token=${token}`, params);
+  const { errcode, errmsg, next_cursor, dept_user } = res.data;
+  if (errcode) {
+    debug('listId失败::', `${errmsg}(${errcode})`);
+    throw new WecomError(errcode, errmsg);
+  }
+  return { next_cursor, dept_user };
+}
+
+/**
+ * 获取全部企业成员的userid与对应的部门ID列表
+ * @param {Object} options 凭证（仅支持通过“通讯录同步secret”调用）
+ * @returns 
+ */
+export const listAllId = async (options) => {
+  let dept_user = [];
+  let cursor = '';
+  do {
+    const res = await listId({ cursor }, options);
+    dept_user = [
+      ...dept_user,
+      ...res.dept_user,
+    ];
+    cursor = res.next_cursor;
+  } while (cursor);
+  return dept_user;
+}
+
 export default {
   simpleList,
   update,
@@ -176,4 +217,6 @@ export default {
   attachTextExtAttrTo,
   getExtAttrFrom,
   changeMainDepartment,
+  listId,
+  listAllId,
 }
