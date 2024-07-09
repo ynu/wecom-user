@@ -82,6 +82,22 @@ export const get = async (userid, options = {}) => {
 };
 
 /**
+  * 删除成员
+  * @param {Object} dept 成员信息，详见：https://work.weixin.qq.com/api/doc/90000/90135/90197
+  * @returns 错误代码
+  */
+ export const del = async (userid, options = {}) => {
+  const token = await getToken(options);
+  const res = await axios.post(`${qyHost}/user/delete?access_token=${token}&userid=${userid}`);
+  const { errcode, errmsg } = res.data;
+  if (errcode) {
+   warn('delete失败::', `${errmsg}(${errcode})`);
+   throw new WecomError(errcode, errmsg);
+  }
+  return errcode;
+};
+
+/**
   * 根据手机号查询用户userid
   * @param {String} mobile 手机号
   * @param {Object} options 配置信息
