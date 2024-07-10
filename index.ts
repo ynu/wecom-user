@@ -5,6 +5,7 @@
 import axios from 'axios';
 import Debug from 'debug';
 import { getToken, qyHost, WecomError } from 'wecom-common';
+import { UserCreateParams } from './types';
 const debug = Debug('wecom-user:debug');
 const warn = Debug('wecom-user:warn');
 /**
@@ -48,10 +49,11 @@ export const update = async (user: any, options = {}) => {
 
 /**
  * 创建成员
- * @param {Object} dept 成员信息，详见：https://work.weixin.qq.com/api/doc/90000/90135/90195
+ * @param {UserCreateParams} user 成员信息
+ * @see https://work.weixin.qq.com/api/doc/90000/90135/90195
  * @returns 错误代码
  */
-export const create = async (user: any, options = {}) => {
+export const create = async (user: UserCreateParams, options = {}):Promise<number> => {
   const token = await getToken(options);
   const res = await axios.post(`${qyHost}/user/create?access_token=${token}`, {
     ...user,
