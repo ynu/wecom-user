@@ -1,3 +1,4 @@
+import { WecomResponse } from 'wecom-common';
 /**
  * 定义企业微信API请求参数的类型
  */
@@ -119,17 +120,7 @@ export type UserCreateParams = {
 /**
  * 定义企业微信API响应结果的类型
  */
-export type UserCreateResult = {
-  /**
-   * 错误码，0表示成功
-   */
-  errcode: number;
-
-  /**
-   * 错误信息
-   */
-  errmsg: string;
-
+export type UserCreateResult = WecomResponse & {
   /**
    * 用户信息，当创建成功时返回，可选字段
    */
