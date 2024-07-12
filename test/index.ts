@@ -11,23 +11,26 @@ const options = {
     secret: SECRET,
 };
 
+let userid: string = TEST_USER_ID || ''
+let departid: string = TEST_DEPT_ID || ''
+let phone: string = TEST_USER_PHONE || ''
 describe('wecom-user-api 测试', function() {
     console.log(TEST_DEPT_ID)
     after(() => cache.clear());
     it('simpleList 获取部门成员', async () => {
-        const userlist = await simpleList(TEST_DEPT_ID,  options);
+        const userlist = await simpleList(departid,  options);
         assert.ok(userlist);
     });
     it('getUserId 根据手机号获取userid', async () => {
-        const res = await getUserId(TEST_USER_PHONE, options);
+        const res = await getUserId(phone, options);
         assert.equal(res, TEST_USER_ID);
     });
     it('get 获取用户详情', async () => {
-        const res = await get(TEST_USER_ID, options);
+        const res = await get(userid, options);
         assert.equal(res.mobile, TEST_USER_PHONE);
     });
     it('getUserByMobile', async () => {
-        const res = await getUserByMobile(TEST_USER_PHONE, options);
+        const res = await getUserByMobile(phone, options);
         assert.equal(res.userid, TEST_USER_ID);
     });
     it('listId 获取企业成员的userid与对应的部门ID列表', async () => {
@@ -35,7 +38,7 @@ describe('wecom-user-api 测试', function() {
             ...options,
             secret: CONTACT_SECRET,
         });
-        assert.equal(res.dept_user.length, 1);
+        assert.equal(res.dept_user?.length, 1);
     });
     it('listId 获取全部企业成员的userid与对应的部门ID列表', async () => {
         const res = await listAllId({
