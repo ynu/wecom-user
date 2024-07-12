@@ -15,7 +15,6 @@ import {
   UserListResult,
   UserUpdateParams
 } from './types';
-import {promises} from "dns";
 const debug = Debug('wecom-user:debug');
 const warn = Debug('wecom-user:warn');
 /**
