@@ -41,6 +41,28 @@ export const simpleList = async (id: string, options: any) => {
 };
 
 /**
+ * 获取部门成员详情
+ * @see https://developer.work.weixin.qq.com/document/path/90337
+ * @param {String} id 部门id
+ * @param {Object} options.fetchChild 是否递归获取子部门成员
+ * @returns 成员列表
+ */
+export const detailList = async (id: string, options: any) => {
+  const fetchChild = options.fetchChild || false;
+  const token = await getToken(options);
+  const res = await axios.get(`${qyHost}/user/list?access_token=${token}&department_id=${id}&fetch_child=${fetchChild ? 1 : 0}`);
+
+  const { errcode, errmsg, userlist } = res.data;
+
+  if (errcode) {
+    warn('detailList::出错', `${errmsg}(${errcode})`);
+    throw new WecomError(errcode, errmsg);
+  }
+  debug('detailList结果长度::', userlist.length);
+  return userlist;
+};
+
+/**
  * 更新成员
  * @param {Object} user 更新成员请求参数，详见：https://work.weixin.qq.com/api/doc/90000/90135/90197
  * @param {Object} options 配置信息
@@ -240,6 +262,7 @@ export const listAllId = async (options: GetToken): Promise<DeptUser[]> => {
 
 export default {
   simpleList,
+  detailList,
   update,
   create,
   get,

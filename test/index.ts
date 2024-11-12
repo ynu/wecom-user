@@ -3,7 +3,7 @@ import { after, describe, it } from 'node:test';
 import 'dotenv/config';
 import * as assert from 'assert';
 import * as cache from 'memory-cache';
-import { simpleList, getUserId, get, getUserByMobile, listId, listAllId } from '../index';
+import { simpleList, getUserId, get, getUserByMobile, listId, listAllId, detailList } from '../index';
 
 const { CORP_ID, SECRET, TEST_DEPT_ID, TEST_USER_PHONE, TEST_USER_ID, CONTACT_SECRET } = process.env;
 const options = {
@@ -20,6 +20,10 @@ describe('wecom-user-api 测试', function() {
     it('simpleList 获取部门成员', async () => {
         const userlist = await simpleList(departid,  options);
         assert.ok(userlist);
+    });
+    it('detailList 获取部门成员', async () => {
+        const userList = await detailList(departid,  options);
+        assert.ok(userList);
     });
     it('getUserId 根据手机号获取userid', async () => {
         const res = await getUserId(phone, options);
